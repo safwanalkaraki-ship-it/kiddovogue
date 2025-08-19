@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -39,17 +40,17 @@ export default function ProductsPage() {
   const handleCheckout = () => {
     const message = cart
       .map(
-        (item) => \`\${item.name} × \${item.quantity} = SAR \${item.price * item.quantity}\`
+        (item) => `${item.name} × ${item.quantity} = SAR ${item.price * item.quantity}`
       )
       .join("\n");
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     const whatsappMessage = encodeURIComponent(
-      \`Hello, I'd like to place an order from KiddoVogue:\n\n\${message}\n\nTotal: SAR \${total}\n\nName: \nAddress: \nPhone:\`
+      `Hello, I'd like to place an order from KiddoVogue:\n\n${message}\n\nTotal: SAR ${total}\n\nName: \nAddress: \nPhone:`
     );
 
-    window.open(\`https://wa.me/966500000000?text=\${whatsappMessage}\`);
+    window.open(`https://wa.me/966500000000?text=${whatsappMessage}`);
   };
 
   return (
