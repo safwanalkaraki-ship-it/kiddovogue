@@ -1,3 +1,3 @@
-# KiddoVogue
+# KiddoVogue Storefront
 
-A dropshipping storefront for children's clothing built with Next.js.
+Deployed with Next.js on Vercel.
