@@ -1,6 +1,6 @@
-export function Button({ children, onClick, className }) {
+export function Button({ children, ...props }) {
   return (
-    <button onClick={onClick} className={`rounded px-4 py-2 text-sm font-medium ${className}`}>
+    <button {...props} className={`px-4 py-2 rounded ${props.className || ''}`}>
       {children}
     </button>
   );

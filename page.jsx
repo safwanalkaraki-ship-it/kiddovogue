@@ -1,5 +1,6 @@
-'use client';
 import React, { useState } from "react";
+import { Card, CardContent } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
 
 const products = [
   { id: 1, name: "Stylish Romper", price: 89, image: "/products/product-1.jpg" },
@@ -23,43 +24,106 @@ export default function ProductsPage() {
     }
   };
 
+  const removeFromCart = (productId) => {
+    setCart(cart.filter((item) => item.id !== productId));
+  };
+
+  const updateQuantity = (productId, quantity) => {
+    setCart(
+      cart.map((item) =>
+        item.id === productId ? { ...item, quantity: Math.max(quantity, 1) } : item
+      )
+    );
+  };
+
   const handleCheckout = () => {
     const message = cart
-      .map((item) => `${item.name} × ${item.quantity} = SAR ${item.price * item.quantity}`)
+      .map(
+        (item) => \`\${item.name} × \${item.quantity} = SAR \${item.price * item.quantity}\`
+      )
       .join("\n");
+
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
     const whatsappMessage = encodeURIComponent(
-      `Hello, I'd like to place an order from KiddoVogue:\n\n${message}\n\nTotal: SAR ${total}`
+      \`Hello, I'd like to place an order from KiddoVogue:\n\n\${message}\n\nTotal: SAR \${total}\n\nName: \nAddress: \nPhone:\`
     );
-    window.open(`https://wa.me/966500000000?text=${whatsappMessage}`);
+
+    window.open(\`https://wa.me/966500000000?text=\${whatsappMessage}\`);
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>KiddoVogue - Children's Clothing</h1>
-      <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-        {products.map((product) => (
-          <div key={product.id} style={{ border: '1px solid #eee', padding: 10, width: 200 }}>
-            <img src={product.image} alt={product.name} style={{ width: '100%' }} />
-            <h3>{product.name}</h3>
-            <p>SAR {product.price}</p>
-            <button onClick={() => addToCart(product)}>Add to Cart</button>
-          </div>
-        ))}
-      </div>
-      {cart.length > 0 && (
-        <div style={{ marginTop: 40 }}>
-          <h2>Cart</h2>
-          {cart.map((item) => (
-            <p key={item.id}>
-              {item.name} × {item.quantity}
-            </p>
+    <div className="min-h-screen bg-white text-gray-800">
+      <header className="flex items-center justify-between px-6 py-4 shadow-md">
+        <h1 className="text-2xl font-bold">KiddoVogue</h1>
+        <nav className="space-x-6 text-sm">
+          <a href="/" className="hover:underline">Home</a>
+          <a href="/products" className="hover:underline">Shop</a>
+          <a href="/about" className="hover:underline">About</a>
+          <a href="/contact" className="hover:underline">Contact</a>
+        </nav>
+        <a href="#cart" className="text-xl">🛒</a>
+      </header>
+
+      <section className="py-12 px-6 bg-gray-50">
+        <h3 className="text-2xl font-semibold mb-6 text-center">Children's Clothing</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <Card key={product.id} className="hover:shadow-lg transition duration-200">
+              <CardContent className="p-4">
+                <img src={product.image} alt={product.name} className="w-full h-40 object-cover mb-2 rounded" />
+                <h4 className="font-medium">{product.name}</h4>
+                <p className="text-sm text-gray-500">SAR {product.price}.00</p>
+                <Button size="sm" className="mt-2 w-full bg-pink-500 hover:bg-pink-600 text-white" onClick={() => addToCart(product)}>
+                  Add to Cart
+                </Button>
+              </CardContent>
+            </Card>
           ))}
-          <button onClick={handleCheckout} style={{ marginTop: 10 }}>
-            Checkout via WhatsApp
-          </button>
         </div>
-      )}
+      </section>
+
+      <section id="cart" className="py-12 px-6">
+        <h3 className="text-2xl font-semibold mb-6 text-center">Shopping Cart</h3>
+        {cart.length === 0 ? (
+          <p className="text-center text-gray-500">Your cart is empty.</p>
+        ) : (
+          <div className="space-y-4 max-w-2xl mx-auto">
+            {cart.map((item) => (
+              <div key={item.id} className="flex items-center justify-between border-b pb-4">
+                <div>
+                  <h4 className="font-medium">{item.name}</h4>
+                  <p className="text-sm text-gray-500">SAR {item.price} × {item.quantity}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min="1"
+                    value={item.quantity}
+                    onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
+                    className="w-16 border px-2 py-1 text-sm"
+                  />
+                  <Button size="sm" onClick={() => removeFromCart(item.id)} variant="outline">Remove</Button>
+                </div>
+              </div>
+            ))}
+            <div className="text-right mt-6">
+              <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={handleCheckout}>
+                Proceed to Checkout via WhatsApp
+              </Button>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <footer className="py-8 px-6 bg-gray-100 text-sm text-center">
+        <p>&copy; {new Date().getFullYear()} KiddoVogue. All rights reserved.</p>
+        <div className="mt-2 space-x-4">
+          <a href="/faq">FAQ</a>
+          <a href="/returns">Returns</a>
+          <a href="https://instagram.com/kiddovogue">Instagram</a>
+        </div>
+      </footer>
     </div>
   );
 }
